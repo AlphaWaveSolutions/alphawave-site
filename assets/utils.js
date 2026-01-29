@@ -1,17 +1,44 @@
-// assets/config.js
-window.ALPHAWAVE_CONFIG = {
-  // Paste your Google Apps Script Web App URL here (Deployment URL)
-  GAS_ENDPOINT: "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE",
+// assets/utils.js
+export function qs(sel, root = document) { return root.querySelector(sel); }
+export function qsa(sel, root = document) { return [...root.querySelectorAll(sel)]; }
 
-  // Admin "hidden" access token (basic obscurity, not true security)
-  // Change this to a long random string.
-  ADMIN_TOKEN: "CHANGE_THIS_TO_A_LONG_RANDOM_TOKEN",
+export function escapeHTML(str = "") {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
-  BUSINESS: {
-    name: "AlphaWave Solutions",
-    owner: "Leando Arthur Thys",
-    address: "16 King Street, Elim, Western Cape, South Africa",
-    phone: "+27 61 522 4124",
-    email: "solutionsalphawave@gmail.com"
+export function formatDateTimeZA(isoOrDate) {
+  const d = (isoOrDate instanceof Date) ? isoOrDate : new Date(isoOrDate);
+  // Johannesburg time formatting (client-side)
+  try {
+    return new Intl.DateTimeFormat("en-ZA", {
+      timeZone: "Africa/Johannesburg",
+      year: "numeric", month: "short", day: "2-digit",
+      hour: "2-digit", minute: "2-digit"
+    }).format(d);
+  } catch {
+    return d.toLocaleString();
   }
-};
+}
+
+export function toWhatsAppLink(phone, message) {
+  const digits = phone.replace(/[^\d+]/g, "");
+  const msg = encodeURIComponent(message || "");
+  // Use wa.me format (strip + for wa.me)
+  const waNumber = digits.replace("+", "");
+  return `https://wa.me/${waNumber}?text=${msg}`;
+}
+
+export function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+}
+
+export function isValidPhone(phone) {
+  // permissive; accepts SA formatting, spaces, +, etc.
+  const cleaned = String(phone || "").trim();
+  return cleaned.length >= 8 && cleaned.length <= 20;
+}
