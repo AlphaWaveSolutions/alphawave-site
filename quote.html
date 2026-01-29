@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Request a Quote | AlphaWave Solutions</title>
+  <meta name="description" content="Request a quote from AlphaWave Solutions. Submit your issue and receive a Ticket ID instantly." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script src="assets/config.js"></script>
+  <script type="module" src="assets/main.js"></script>
+  <script type="module" src="assets/quote.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="index.html">
+          <div class="logo" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M4 14c3-7 9-7 12 0" stroke="#0b1220" stroke-width="3.2" stroke-linecap="round"/>
+              <path d="M8.5 9.5h0" stroke="#0b1220" stroke-width="4" stroke-linecap="round"/>
+              <path d="M15.5 9.5h0" stroke="#0b1220" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="title">
+            <b>AlphaWave Solutions</b>
+            <span>Elim • Western Cape</span>
+          </div>
+        </a>
+
+        <nav class="navlinks">
+          <a data-nav href="index.html">Home</a>
+          <a data-nav href="services.html">Services</a>
+          <a data-nav href="pricing.html">Pricing</a>
+          <a data-nav class="active" href="quote.html">Request a Quote</a>
+          <a data-nav href="privacy.html">Privacy</a>
+        </nav>
+
+        <button id="menuBtn" class="menuBtn" aria-label="Open menu" aria-expanded="false">☰</button>
+      </div>
+
+      <div id="mobileMenu" class="mobileMenu">
+        <a data-nav href="index.html">Home</a>
+        <a data-nav href="services.html">Services</a>
+        <a data-nav href="pricing.html">Pricing</a>
+        <a data-nav href="quote.html" class="active">Request a Quote</a>
+        <a data-nav href="privacy.html">Privacy</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="heroCard" style="margin-top:18px;">
+      <h1 class="h1">Request a Quote</h1>
+      <p class="lead">Fill in the form below. You’ll receive a Ticket ID instantly.</p>
+      <div id="formBanner" class="banner">Tip: Include device model + exact error message for a faster quote.</div>
+    </section>
+
+    <section id="formSection" class="card" style="margin-top:14px;">
+      <form id="quoteForm" class="form" novalidate>
+        <label class="label">
+          Full name
+          <input id="name" name="name" autocomplete="name" required />
+        </label>
+
+        <label class="label">
+          Phone / WhatsApp
+          <input id="phone" name="phone" autocomplete="tel" required />
+        </label>
+
+        <label class="label">
+          Email
+          <input id="email" name="email" type="email" autocomplete="email" required />
+        </label>
+
+        <label class="label">
+          Service type
+          <select id="serviceType" name="serviceType" required>
+            <option value="">Select…</option>
+            <option>Phone repairs/support</option>
+            <option>Computer services</option>
+            <option>Smart TV setup/troubleshooting</option>
+            <option>Wi-Fi & networking setup/optimization</option>
+            <option>Technical consultation</option>
+          </select>
+        </label>
+
+        <label class="label">
+          Device type
+          <select id="deviceType" name="deviceType" required>
+            <option value="">Select…</option>
+            <option>Android phone</option>
+            <option>iPhone</option>
+            <option>Laptop</option>
+            <option>Desktop PC</option>
+            <option>Smart TV</option>
+            <option>Router / Wi-Fi</option>
+            <option>Other</option>
+          </select>
+        </label>
+
+        <label class="label">
+          Issue description
+          <textarea id="issue" name="issue" placeholder="What’s the problem? What happened before it started? Any error message?" required></textarea>
+        </label>
+
+        <label class="label">
+          Preferred contact method
+          <select id="preferredContact" name="preferredContact" required>
+            <option value="">Select…</option>
+            <option>WhatsApp</option>
+            <option>Phone call</option>
+            <option>Email</option>
+          </select>
+        </label>
+
+        <div class="inline">
+          <input id="consent" type="checkbox" required />
+          <label for="consent" class="note">
+            I consent to AlphaWave Solutions storing my contact details and issue description for quoting and service communication.
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Submit request →</button>
+          <a class="btn" href="pricing.html">View pricing</a>
+        </div>
+
+        <p class="note">
+          By submitting, you agree to the <a href="privacy.html"><b>Privacy</b></a> policy.
+        </p>
+      </form>
+    </section>
+
+    <section id="confirmSection" class="card" style="margin-top:14px; display:none;">
+      <h2 style="margin:0 0 10px;">Confirmation</h2>
+      <div id="confirmSummary"></div>
+
+      <hr class="sep">
+
+      <div class="banner">
+        Your Ticket ID: <b id="ticketId">—</b>
+      </div>
+
+      <div class="actions" style="margin-top:12px;">
+        <button id="copyTicket" class="btn ok" type="button">Copy Ticket ID</button>
+        <a id="waConfirm" class="btn primary" href="#" rel="noopener">Send via WhatsApp →</a>
+        <a class="btn" href="index.html">Back to home</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footerGrid">
+      <div><b>AlphaWave Solutions</b><br><small>Elim, Western Cape</small></div>
+      <div><b>Pages</b><br><small><a href="services.html">Services</a> • <a href="pricing.html">Pricing</a></small></div>
+      <div><b>Legal</b><br><small><a href="privacy.html">Privacy</a> • © <span id="year"></span></small></div>
+    </div>
+  </footer>
+</body>
+</html>
