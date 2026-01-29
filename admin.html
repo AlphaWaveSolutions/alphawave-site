@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin | AlphaWave Solutions</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script src="assets/config.js"></script>
+  <script type="module" src="assets/admin.js"></script>
+</head>
+<body>
+  <main class="container" style="margin-top:18px;">
+    <section class="heroCard">
+      <h1 class="h1">Admin (Hidden)</h1>
+      <p class="lead">
+        This page reads recent submissions from a public JSON endpoint.
+        <b>Note:</b> This is “hidden by URL” only, not secure access control.
+      </p>
+      <div id="adminBanner" class="banner">Loading…</div>
+      <div class="actions" style="margin-top:12px;">
+        <button id="refreshBtn" class="btn primary" type="button">Refresh</button>
+        <a class="btn" href="index.html">Home</a>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h2 style="margin:0 0 10px;">Recent Quote Requests</h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Ticket</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Service</th>
+            <th>Device</th>
+            <th>Preferred</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="7">Loading…</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="sep">
+      <p class="note">
+        For full details (issue descriptions), view them directly in Google Sheets (recommended).
+      </p>
+    </section>
+  </main>
+</body>
+</html>
