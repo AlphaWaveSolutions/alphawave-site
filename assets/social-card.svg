@@ -1,0 +1,22 @@
+<!-- assets/social-card.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#070b14"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#66b3ff"/>
+      <stop offset="1" stop-color="#7cf0ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="190" cy="160" r="140" fill="rgba(102,179,255,0.18)"/>
+  <circle cx="1030" cy="120" r="170" fill="rgba(124,240,255,0.14)"/>
+  <rect x="90" y="120" width="1020" height="390" rx="30" fill="rgba(16,31,61,0.75)" stroke="rgba(255,255,255,0.12)"/>
+  <rect x="130" y="165" width="90" height="90" rx="28" fill="url(#g)"/>
+  <text x="245" y="220" font-family="Arial, sans-serif" font-size="54" fill="#eaf0ff" font-weight="700">AlphaWave Solutions</text>
+  <text x="245" y="275" font-family="Arial, sans-serif" font-size="28" fill="#b7c3e6">Phone • Computer • Smart TV • Wi-Fi & Networking • Tech Support</text>
+  <text x="245" y="340" font-family="Arial, sans-serif" font-size="26" fill="#b7c3e6">Elim, Western Cape, South Africa</text>
+  <text x="245" y="395" font-family="Arial, sans-serif" font-size="26" fill="#b7c3e6">Fast quotes • Clean repairs • Professional support</text>
+</svg>
