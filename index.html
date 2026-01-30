@@ -17,6 +17,7 @@
   <meta property="og:image" content="assets/social-card.svg" />
 
   <link rel="stylesheet" href="assets/styles.css" />
+  <script src="assets/main.js" defer></script>
 
   <!-- LocalBusiness schema -->
   <script type="application/ld+json">
@@ -36,111 +37,114 @@
     "url": ""
   }
   </script>
-
-  <script src="assets/main.js" defer></script>
-  <script type="module" src="assets/main.js"></script>
 </head>
 
 <body>
+  <!-- HEADER -->
   <header class="site-header">
-  <div class="container bar">
-    <a class="brand" href="index.html">
-      <span class="logo" aria-hidden="true"></span>
-      <div>
-        <div class="title">AlphaWave Solutions</div>
-        <div class="sub">Elim • Western Cape</div>
+    <div class="container bar">
+      <a class="brand" href="index.html">
+        <span class="logo" aria-hidden="true"></span>
+        <div>
+          <div class="title">AlphaWave Solutions</div>
+          <div class="sub">Elim • Western Cape</div>
+        </div>
+      </a>
+
+      <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu">☰</button>
+
+      <nav class="nav" id="siteNav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="pricing.html">Pricing</a>
+        <a class="btn" href="quote.html">Request a Quote</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+    <!-- HERO -->
+    <section class="card glow hero">
+      <span class="badge">⚡ Fast support • 📍 Elim • 💬 WhatsApp friendly</span>
+      <h1>Fast, reliable tech support in Elim.</h1>
+      <p class="muted">
+        Phones, computers, Smart TV setup, Wi-Fi optimisation, and on-site troubleshooting.
+        Transparent “starting from” pricing + quick quotes.
+      </p>
+
+      <div class="cta">
+        <a class="btn" href="quote.html">Request a Quote</a>
+        <a class="btn secondary" href="services.html">View Services</a>
+        <a class="btn secondary" href="https://wa.me/27615224124" target="_blank" rel="noreferrer">WhatsApp us</a>
       </div>
-    </a>
 
-    <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu">☰</button>
+      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+        <span class="badge">✅ No logins</span>
+        <span class="badge">✅ Ticket ID instantly</span>
+        <span class="badge">✅ Local support</span>
+        <span class="badge">✅ Mobile-first</span>
+      </div>
+    </section>
 
-    <nav class="nav" id="siteNav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="pricing.html">Pricing</a>
-      <a class="btn" href="quote.html">Request a Quote</a>
-      <a href="privacy.html">Privacy</a>
-    </nav>
-  </div>
-</header>
-
- <section class="hero">
-  <h1 class="title">Fast, reliable tech support in Elim.</h1>
-  <p class="subtitle">Phones, computers, Smart TV setup, Wi-Fi optimisation, and on-site troubleshooting.</p>
-  <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <a class="btn" href="quote.html">Request a Quote</a>
-    <a class="btn secondary" href="services.html">View Services</a>
-  </div>
-</section>
-
-        </p>
-
-        <div class="actions">
-          <a class="btn primary" href="quote.html">Request a Quote →</a>
-          <a class="btn" id="waLink" href="#" rel="noopener">WhatsApp us</a>
-          <a class="btn" href="services.html">View services</a>
-        </div>
-
-        <div class="pills" aria-label="Highlights">
-          <span class="pill">Mobile-first</span>
-          <span class="pill">No logins</span>
-          <span class="pill">Fast quotes</span>
-          <span class="pill">Local support</span>
-          <span class="pill">Transparent “starting from” pricing</span>
-        </div>
-      </section>
-
-      <aside class="heroCard">
-        <h2 style="margin:0 0 8px;">Contact</h2>
-        <div class="banner">
+    <!-- CONTACT + HOW IT WORKS -->
+    <section class="section grid cols-2">
+      <div class="card">
+        <h2>Contact</h2>
+        <p class="muted" style="margin-top:6px">
           <b>AlphaWave Solutions</b><br>
           Owner: Leando Arthur Thys<br>
-          Address: 16 King Street, Elim, Western Cape, South Africa<br>
+          16 King Street, Elim, Western Cape, South Africa<br>
           Phone/WhatsApp: <a href="tel:+27615224124">+27 61 522 4124</a><br>
           Email: <a href="mailto:solutionsalphawave@gmail.com">solutionsalphawave@gmail.com</a>
+        </p>
+
+        <div class="cta" style="margin-top:12px">
+          <a class="btn secondary" href="tel:+27615224124">Call now</a>
+          <a class="btn secondary" href="mailto:solutionsalphawave@gmail.com">Email</a>
         </div>
+      </div>
 
-        <hr class="sep">
-
-        <div class="kpiRow">
-          <div class="kpi">
-            <b>Ticketed Quotes</b>
-            <span>Every request gets a unique Ticket ID.</span>
-          </div>
-          <div class="kpi">
-            <b>Clear Process</b>
-            <span>Describe the issue → get a quote → schedule service.</span>
-          </div>
-          <div class="kpi">
-            <b>Local & Reliable</b>
-            <span>Support designed for real-world conditions.</span>
-          </div>
+      <div class="card">
+        <h2>How it works</h2>
+        <ol style="color: var(--muted); margin:10px 0 0 18px;">
+          <li>Submit your request on the Quote page.</li>
+          <li>You receive a Ticket ID instantly.</li>
+          <li>We follow up via your preferred contact method.</li>
+        </ol>
+        <div class="cta" style="margin-top:14px">
+          <a class="btn" href="quote.html">Request a Quote</a>
+          <a class="btn secondary" href="pricing.html">View pricing</a>
         </div>
-      </aside>
-    </div>
+      </div>
+    </section>
 
-    <section class="grid" style="margin-top:16px;">
+    <!-- SERVICES PREVIEW -->
+    <section class="section grid cols-3">
       <div class="card">
         <h3>Phone Repairs & Support 📱</h3>
-        <p>Diagnostics, performance cleanup, app issues, basic repairs, and guidance.</p>
+        <p class="muted">Diagnostics, performance cleanup, app issues, basic repairs, and guidance.</p>
         <ul>
           <li>Battery/performance troubleshooting</li>
           <li>Software cleanup & setup</li>
           <li>General support & advice</li>
         </ul>
       </div>
+
       <div class="card">
         <h3>Computer Services 💻</h3>
-        <p>Installs, virus removal, tune-ups, and practical fixes.</p>
+        <p class="muted">Installs, virus removal, tune-ups, and practical fixes.</p>
         <ul>
           <li>Windows installs & updates</li>
           <li>Virus/malware removal</li>
-          <li>PC optimization</li>
+          <li>PC optimisation</li>
         </ul>
       </div>
+
       <div class="card">
         <h3>Wi-Fi & Smart TV 📶</h3>
-        <p>Setup, troubleshooting, and network optimization for smoother streaming and browsing.</p>
+        <p class="muted">Setup, troubleshooting, and network optimisation for smoother streaming and browsing.</p>
         <ul>
           <li>Router setup & placement</li>
           <li>Smart TV apps & streaming fixes</li>
@@ -148,43 +152,14 @@
         </ul>
       </div>
     </section>
-
-    <section class="card">
-      <h2>How it works</h2>
-      <ol style="color:var(--muted); margin:8px 0 0 18px;">
-        <li>Submit your request on the Quote page.</li>
-        <li>You receive a Ticket ID instantly.</li>
-        <li>We follow up via your preferred contact method.</li>
-      </ol>
-      <div class="actions" style="margin-top:14px;">
-        <a class="btn primary" href="quote.html">Request a Quote →</a>
-        <a class="btn" href="pricing.html">View pricing</a>
-      </div>
-    </section>
   </main>
 
-  <footer class="footer">
-    <div class="container footerGrid">
-      <div>
-        <b>AlphaWave Solutions</b><br>
-        <small>Elim, Western Cape • Phone • Computer • Smart TV • Wi-Fi</small>
-      </div>
-      <div>
-        <b>Pages</b><br>
-        <small>
-          <a href="services.html">Services</a> •
-          <a href="pricing.html">Pricing</a> •
-          <a href="quote.html">Request a Quote</a>
-        </small>
-      </div>
-      <div>
-        <b>Legal</b><br>
-        <small><a href="privacy.html">Privacy</a> • © <span id="year"></span></small>
-      </div>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container bar">
+      <div>© <span id="year"></span> AlphaWave Solutions</div>
+      <div class="small">Elim, Western Cape • Fast quotes • No logins</div>
     </div>
   </footer>
 </body>
 </html>
-
-
-
