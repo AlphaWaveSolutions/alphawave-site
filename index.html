@@ -42,45 +42,27 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="container">
-      <div class="nav">
-        <a class="brand" href="index.html" aria-label="AlphaWave Solutions home">
-          <div class="logo" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M4 14c3-7 9-7 12 0" stroke="#0b1220" stroke-width="3.2" stroke-linecap="round"/>
-              <path d="M8.5 9.5h0" stroke="#0b1220" stroke-width="4" stroke-linecap="round"/>
-              <path d="M15.5 9.5h0" stroke="#0b1220" stroke-width="4" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="title">
-            <b>AlphaWave Solutions</b>
-            <span>Elim • Western Cape</span>
-          </div>
-        </a>
-
-        <nav class="navlinks" aria-label="Primary">
-          <a data-nav href="index.html">Home</a>
-          <a data-nav href="services.html">Services</a>
-          <a data-nav href="pricing.html">Pricing</a>
-          <a data-nav class="active" href="quote.html">Request a Quote</a>
-          <a data-nav href="privacy.html">Privacy</a>
-        </nav>
-
-        <button id="menuBtn" class="menuBtn" aria-label="Open menu" aria-expanded="false">
-          ☰
-        </button>
+  <header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="index.html">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <div class="title">AlphaWave Solutions</div>
+        <div class="sub">Elim • Western Cape</div>
       </div>
+    </a>
 
-      <div id="mobileMenu" class="mobileMenu" aria-label="Mobile menu">
-        <a data-nav href="index.html">Home</a>
-        <a data-nav href="services.html">Services</a>
-        <a data-nav href="pricing.html">Pricing</a>
-        <a data-nav href="quote.html" class="cta">Request a Quote</a>
-        <a data-nav href="privacy.html">Privacy</a>
-      </div>
-    </div>
-  </header>
+    <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu">☰</button>
+
+    <nav class="nav" id="siteNav">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="pricing.html">Pricing</a>
+      <a class="btn" href="quote.html">Request a Quote</a>
+      <a href="privacy.html">Privacy</a>
+    </nav>
+  </div>
+</header>
 
  <section class="hero">
   <h1 class="title">Fast, reliable tech support in Elim.</h1>
@@ -203,4 +185,5 @@
   </footer>
 </body>
 </html>
+
 
