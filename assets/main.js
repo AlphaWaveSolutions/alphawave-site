@@ -32,3 +32,24 @@ import { qs, qsa, toWhatsAppLink } from "./utils.js";
     wa.setAttribute("href", link);
   }
 })();
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("navToggle");
+  const nav = document.getElementById("siteNav");
+  if (btn && nav) {
+    btn.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
+  }
+
+  // Footer year if present
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+
+  // Mark active link
+  const path = location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav a").forEach(a => {
+    const href = a.getAttribute("href");
+    if (href === path) a.classList.add("active");
+  });
+});
+
