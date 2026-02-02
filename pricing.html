@@ -1,130 +1,110 @@
 <!doctype html>
-<html lang="en-ZA">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pricing | AlphaWave Solutions</title>
-  <meta name="description" content="AlphaWave Solutions indicative 'starting from' pricing. Request a quote for variable work." />
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script src="assets/config.js"></script>
-  <script type="module" src="assets/main.js"></script>
+  <meta name="description" content="Transparent pricing for phone support, computer repairs, Wi-Fi & Smart TV setup, and streaming/IPTV support." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-<header class="site-header">
-  <div class="container bar">
-    <a class="brand" href="index.html">
-      <span class="logo" aria-hidden="true"></span>
-      <div>
-        <div class="title">AlphaWave Solutions</div>
-        <div class="sub">Elim • Western Cape</div>
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <img src="favicon.svg" alt="AlphaWave logo" />
+        <div class="title"><b>AlphaWave Solutions</b><span>Elim • Western Cape</span></div>
+      </a>
+
+      <div class="menu">
+        <a data-nav href="index.html">Home</a>
+        <a data-nav href="services.html">Services</a>
+        <a data-nav href="pricing.html">Pricing</a>
+        <a data-nav href="admin.html">Track Ticket</a>
+        <a data-nav href="privacy.html">Privacy</a>
       </div>
-    </a>
 
-    <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu">☰</button>
-
-    <nav class="nav" id="siteNav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="pricing.html">Pricing</a>
-      <a class="btn" href="quote.html">Request a Quote</a>
-      <a href="privacy.html">Privacy</a>
+      <div class="nav-actions">
+        <button class="mobile-toggle" data-menu-btn aria-label="Open menu">Menu</button>
+        <a class="btn primary" href="quote.html">Request a Quote →</a>
+      </div>
     </nav>
+
+    <div class="mobile-menu" data-mobile-menu>
+      <a data-nav href="index.html">Home</a>
+      <a data-nav href="services.html">Services</a>
+      <a data-nav href="pricing.html">Pricing</a>
+      <a data-nav href="admin.html">Track Ticket</a>
+      <a data-nav href="privacy.html">Privacy</a>
+      <a class="btn primary wide" href="quote.html">Request a Quote →</a>
+    </div>
   </div>
 </header>
 
-  <main class="container">
-    <section class="heroCard" style="margin-top:18px;">
-      <h1 class="h1">Pricing</h1>
-      <p class="lead">
-        These are <b>starting-from</b> prices to guide expectations.
-        Final pricing depends on device condition, parts, and time required.
-      </p>
-      <div class="actions">
-        <a class="btn primary" href="quote.html">Request a Quote →</a>
-        <a class="btn" href="services.html">View services</a>
-      </div>
-    </section>
+<main class="section">
+  <div class="container">
+    <h2>Pricing</h2>
+    <p class="sub" style="text-align:center; margin: 0 auto 18px;">
+      Clear starting prices. If a job is bigger, we confirm the quote before continuing. ✅
+    </p>
 
-    <section class="card" style="margin-top:14px;">
-      <div class="banner">
-        <b>Important:</b> For variable work (repairs, parts, complex faults) we will confirm cost <b>before</b> proceeding.
-      </div>
+    <div class="cards">
+      <article class="card">
+        <div class="top"><div class="ico">📱</div><h3>Phone Support</h3></div>
+        <p><b>From R150</b> — setup, updates, troubleshooting, cleanup.</p>
+      </article>
 
-      <hr class="sep">
+      <article class="card">
+        <div class="top"><div class="ico">💻</div><h3>PC/Laptop Tune-Up</h3></div>
+        <p><b>From R250</b> — speed boost, cleanup, basic fixes.</p>
+      </article>
 
-      <table class="table" aria-label="Starting from pricing">
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Starting from</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Basic diagnostics (phone/PC)</td>
-            <td>R150</td>
-            <td>Initial assessment & advice.</td>
-          </tr>
-          <tr>
-            <td>Software cleanup / tune-up (phone)</td>
-            <td>R200</td>
-            <td>Performance, storage, basic optimisation.</td>
-          </tr>
-          <tr>
-            <td>PC tune-up (Windows)</td>
-            <td>R300</td>
-            <td>Updates, cleanup, performance checks.</td>
-          </tr>
-          <tr>
-            <td>Virus / malware removal</td>
-            <td>R450</td>
-            <td>Depends on severity; may require backup/reinstall.</td>
-          </tr>
-          <tr>
-            <td>Windows installation (software only)</td>
-            <td>R500</td>
-            <td>Drivers + basic setup (license not included if required).</td>
-          </tr>
-          <tr>
-            <td>Smart TV setup / apps / troubleshooting</td>
-            <td>R250</td>
-            <td>Network + streaming apps setup.</td>
-          </tr>
-          <tr>
-            <td>Wi-Fi router setup & optimisation</td>
-            <td>R350</td>
-            <td>Placement guidance + configuration.</td>
-          </tr>
-          <tr>
-            <td>Technical consultation</td>
-            <td>R200</td>
-            <td>Advice, planning, best-value recommendations.</td>
-          </tr>
-        </tbody>
-      </table>
+      <article class="card">
+        <div class="top"><div class="ico">🛡️</div><h3>Virus Removal</h3></div>
+        <p><b>From R350</b> — scan, remove threats, restore performance.</p>
+      </article>
 
-      <hr class="sep">
+      <article class="card">
+        <div class="top"><div class="ico">📶</div><h3>Wi-Fi / Router Setup</h3></div>
+        <p><b>From R250</b> — setup, stability, range troubleshooting.</p>
+      </article>
 
-      <div class="actions">
-        <a class="btn primary" href="quote.html">Request a Quote →</a>
-        <a class="btn" id="waLink" href="#" rel="noopener">WhatsApp us</a>
-      </div>
+      <article class="card">
+        <div class="top"><div class="ico">📺</div><h3>Smart TV Setup</h3></div>
+        <p><b>From R200</b> — apps, logins, casting, streaming support.</p>
+      </article>
 
-      <p class="note" style="margin-top:10px;">
-        Prices shown are indicative and may change. Confirmed price will be provided per ticket.
-      </p>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footerGrid">
-      <div><b>AlphaWave Solutions</b><br><small>Elim, Western Cape</small></div>
-      <div><b>Pages</b><br><small><a href="services.html">Services</a> • <a href="quote.html">Request a Quote</a></small></div>
-      <div><b>Legal</b><br><small><a href="privacy.html">Privacy</a> • © <span id="year"></span></small></div>
+      <article class="card">
+        <div class="top"><div class="ico">🧩</div><h3>Streaming / IPTV Setup Support</h3></div>
+        <p><b>From R200</b> — setup &amp; troubleshooting for <b>legal, licensed subscriptions only</b>.</p>
+      </article>
     </div>
-  </footer>
+
+    <div class="center-actions">
+      <a class="btn" href="services.html">View Services →</a>
+      <a class="btn primary" href="quote.html">Request a Quote →</a>
+      <a class="btn" href="https://wa.me/27615224124" target="_blank" rel="noopener">WhatsApp Us</a>
+    </div>
+
+    <p class="note" style="text-align:center; margin-top:14px;">
+      Pricing may vary depending on the device, parts, and time required.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="container foot">
+    <div>© <span data-year></span> AlphaWave Solutions</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <a href="services.html">Services</a>
+      <a href="admin.html">Track Ticket</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
 </body>
 </html>
-
