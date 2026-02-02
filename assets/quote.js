@@ -1,134 +1,98 @@
-// assets/quote.js
-import { qs, isValidEmail, isValidPhone, escapeHTML, toWhatsAppLink } from "./utils.js";
+(() => {
+  const $ = (id) => document.getElementById(id);
 
-async function postJSON(url, payload){
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || data.ok !== true) {
-    const msg = data?.error || `Request failed (${res.status})`;
-    throw new Error(msg);
+  const status = $("q_status");
+  const WA_NUMBER = "27615224124";
+  const EMAIL_TO  = "solutionsalphawave@gmail.com";
+
+  function getData() {
+    const name = ($("q_name").value || "").trim();
+    const phone = ($("q_phone").value || "").trim();
+    const service = $("q_service").value;
+    const device = ($("q_device").value || "").trim();
+    const pref = $("q_pref").value;
+    const issue = ($("q_issue").value || "").trim();
+
+    return { name, phone, service, device, pref, issue };
   }
-  return data;
-}
 
-function setBanner(type, msg){
-  const el = qs("#formBanner");
-  if (!el) return;
-  el.className = `banner ${type || ""}`.trim();
-  el.innerHTML = msg;
-}
-
-function lockForm(locked){
-  const form = qs("#quoteForm");
-  if (!form) return;
-  [...form.elements].forEach(e => e.disabled = !!locked);
-}
-
-function getConfig(){
-  const cfg = window.ALPHAWAVE_CONFIG || {};
-  if (!cfg.GAS_ENDPOINT || cfg.GAS_ENDPOINT.includes("PASTE_")) {
-    throw new Error("Google Apps Script endpoint not configured in assets/config.js");
+  function validate(d) {
+    if (!d.name) return "Please enter your name.";
+    if (!d.issue) return "Please describe the problem.";
+    return "";
   }
-  return cfg;
-}
 
-(function initQuote(){
-  const form = qs("#quoteForm");
-  if (!form) return;
+  function formatMessage(d) {
+    // Keep clean, professional, copyable
+    return (
+`Hi AlphaWave Solutions,
+Please can I get a quote?
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+Name: ${d.name}
+Phone: ${d.phone || "-"}
+Service: ${d.service}
+Device: ${d.device || "-"}
+Preferred contact: ${d.pref}
 
-    const cfg = getConfig();
+Problem:
+${d.issue}
 
-    const name = qs("#name").value.trim();
-    const phone = qs("#phone").value.trim();
-    const email = qs("#email").value.trim();
-    const serviceType = qs("#serviceType").value.trim();
-    const deviceType = qs("#deviceType").value.trim();
-    const issue = qs("#issue").value.trim();
-    const preferred = qs("#preferredContact").value.trim();
-    const consent = qs("#consent").checked;
+Thank you.`
+    );
+  }
 
-    // Validation
-    if (name.length < 2) return setBanner("bad", "Please enter your full name.");
-    if (!isValidPhone(phone)) return setBanner("bad", "Please enter a valid phone number.");
-    if (!isValidEmail(email)) return setBanner("bad", "Please enter a valid email address.");
-    if (!serviceType) return setBanner("bad", "Please select a service type.");
-    if (!deviceType) return setBanner("bad", "Please select a device type.");
-    if (issue.length < 10) return setBanner("bad", "Please describe the issue (at least 10 characters).");
-    if (!preferred) return setBanner("bad", "Please select a preferred contact method.");
-    if (!consent) return setBanner("bad", "Consent is required to submit this request.");
+  function saveLocal(d) {
+    const key = "alphawave_quotes";
+    const list = JSON.parse(localStorage.getItem(key) || "[]");
 
-    setBanner("", "Submitting… please wait.");
-    lockForm(true);
-
-    const payload = {
-      name, phone, email,
-      serviceType, deviceType, issueDescription: issue,
-      preferredContact: preferred,
-      consent: consent ? "Yes" : "No",
-      userAgent: navigator.userAgent || "",
-      referrer: document.referrer || "",
-      page: location.href
+    const record = {
+      id: "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
+      createdAt: new Date().toISOString(),
+      ...d
     };
 
-    try {
-      const data = await postJSON(cfg.GAS_ENDPOINT, payload);
+    list.unshift(record);
+    localStorage.setItem(key, JSON.stringify(list));
+    return record.id;
+  }
 
-      // Show confirmation screen
-      qs("#formSection").style.display = "none";
-      qs("#confirmSection").style.display = "block";
+  function setStatus(text) {
+    if (status) status.textContent = text;
+  }
 
-      const ticket = String(data.ticketId || "");
-      qs("#ticketId").textContent = ticket;
+  $("btn_save")?.addEventListener("click", () => {
+    const d = getData();
+    const err = validate(d);
+    if (err) { setStatus(err); return; }
+    const id = saveLocal(d);
+    setStatus(`Saved locally ✅ Quote ID: ${id}`);
+  });
 
-      qs("#confirmSummary").innerHTML = `
-        <div class="banner ok">
-          <b>Request received ✅</b><br>
-          Ticket ID: <b>${escapeHTML(ticket)}</b><br>
-          We’ll contact you via <b>${escapeHTML(preferred)}</b> as soon as possible.
-        </div>
-        <hr class="sep">
-        <div class="banner">
-          <b>Summary</b><br>
-          Name: ${escapeHTML(name)}<br>
-          Phone: ${escapeHTML(phone)}<br>
-          Email: ${escapeHTML(email)}<br>
-          Service: ${escapeHTML(serviceType)}<br>
-          Device: ${escapeHTML(deviceType)}<br>
-        </div>
-      `;
+  $("btn_whatsapp")?.addEventListener("click", () => {
+    const d = getData();
+    const err = validate(d);
+    if (err) { setStatus(err); return; }
 
-      const copyBtn = qs("#copyTicket");
-      copyBtn?.addEventListener("click", async () => {
-        try{
-          await navigator.clipboard.writeText(ticket);
-          copyBtn.textContent = "Copied ✅";
-          setTimeout(()=> copyBtn.textContent = "Copy Ticket ID", 1400);
-        } catch {
-          copyBtn.textContent = "Copy manually";
-        }
-      });
+    const id = saveLocal(d);
+    const msg = formatMessage(d) + `\n\nLocal Quote ID: ${id}`;
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank", "noopener");
+    setStatus(`Opened WhatsApp ✅ Saved locally (Quote ID: ${id})`);
+  });
 
-      // WhatsApp follow-up link
-      const waLink = qs("#waConfirm");
-      if (waLink){
-        const msg =
-          `Hi AlphaWave Solutions 👋\n` +
-          `My quote request Ticket ID is ${ticket}.\n` +
-          `Service: ${serviceType}\nDevice: ${deviceType}\n` +
-          `Issue: ${issue}`;
-        waLink.href = toWhatsAppLink(cfg.BUSINESS.phone, msg);
-      }
+  $("btn_email")?.addEventListener("click", () => {
+    const d = getData();
+    const err = validate(d);
+    if (err) { setStatus(err); return; }
 
-    } catch (err) {
-      setBanner("bad", `Submission failed: ${escapeHTML(err.message)}<br><small>If this persists, contact us on WhatsApp.</small>`);
-      lockForm(false);
-    }
+    const id = saveLocal(d);
+    const subject = `Quote Request - ${d.service} (ID: ${id})`;
+    const body = formatMessage(d) + `\n\nLocal Quote ID: ${id}`;
+
+    // mailto is best for a static site (no backend needed)
+    const url = `mailto:${encodeURIComponent(EMAIL_TO)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = url;
+
+    setStatus(`Opened Email ✅ Saved locally (Quote ID: ${id})`);
   });
 })();
