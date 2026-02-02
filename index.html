@@ -3,281 +3,127 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AlphaWave Solutions | Elim</title>
-  <meta name="description" content="Expert Tech Repair & Support in Elim. Phones, computers, Smart TVs, Wi-Fi, and IPTV setup." />
+  <title>AlphaWave Solutions | Tech Repair &amp; Support in Elim</title>
+  <meta name="description" content="We fix phones, computers, Wi-Fi and Smart TVs in Elim. Fast quotes and reliable local support." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <!-- Background layers -->
-  <div class="bg">
-    <div class="stars"></div>
-    <div class="nebula"></div>
-    <div class="glow-orb orb-1"></div>
-    <div class="glow-orb orb-2"></div>
-  </div>
-
-  <!-- Top nav -->
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="#home" aria-label="AlphaWave Solutions Home">
-        <span class="logo" aria-hidden="true"></span>
-        <span class="brand-text">
-          <span class="brand-name">AlphaWave Solutions</span>
-          <span class="brand-sub">Elim • Western Cape</span>
-        </span>
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <img src="favicon.svg" alt="AlphaWave logo" />
+        <div class="title">
+          <b>AlphaWave Solutions</b>
+          <span>Elim • Western Cape</span>
+        </div>
       </a>
 
-      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="menu" aria-label="Primary navigation">
+        <a data-nav href="index.html">Home</a>
+        <a data-nav href="services.html">Services</a>
+        <a data-nav href="pricing.html">Pricing</a>
+        <a data-nav href="quote.html">Request a Quote</a>
+        <a data-nav href="privacy.html">Privacy</a>
+      </div>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#home">Home</a>
-        <a href="#services">Services</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#track">Track Ticket</a>
-        <a href="#privacy">Privacy</a>
-        <a class="btn btn-small btn-primary" href="#contact">Request a Quote</a>
-      </nav>
+      <div class="nav-actions">
+        <button class="mobile-toggle" data-menu-btn aria-label="Open menu">Menu</button>
+        <a class="btn primary" href="quote.html">Request a Quote →</a>
+      </div>
+    </nav>
+
+    <div class="mobile-menu" data-mobile-menu>
+      <a data-nav href="index.html">Home</a>
+      <a data-nav href="services.html">Services</a>
+      <a data-nav href="pricing.html">Pricing</a>
+      <a data-nav href="quote.html">Request a Quote</a>
+      <a data-nav href="privacy.html">Privacy</a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main id="home">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <h1>Expert Tech Repair &amp;<br/>Support in Elim.</h1>
-          <p class="lead">
-            We fix phones, computers, Smart TVs, Wi-Fi, and more.<br/>
-            Fast, reliable service you can count on.
-          </p>
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="h-eyebrow"><span class="dot"></span> Fast quotes • Local support • No logins needed</div>
+        <h1>Expert Tech Repair &amp;<br/>Support in Elim.</h1>
+        <p class="sub">
+          We fix phones, computers, Smart TVs, Wi-Fi, and more. Fast, reliable service you can count on.
+        </p>
 
-          <div class="cta-row">
-            <a class="btn btn-primary" href="#contact">Request a Quote</a>
-            <a class="btn btn-ghost" id="whatsappBtn" href="#" rel="noopener">WhatsApp Us</a>
-            <a class="btn btn-outline" href="#services">View Services</a>
-          </div>
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-          <div class="device-stack">
-            <div class="phone">
-              <div class="screen">
-                <div class="app app-1"></div>
-                <div class="app app-2"></div>
-                <div class="app app-3"></div>
-                <div class="app app-4"></div>
-                <div class="app app-5"></div>
-                <div class="app app-6"></div>
-              </div>
-            </div>
-
-            <div class="laptop">
-              <div class="lid"></div>
-              <div class="base"></div>
-              <div class="trackpad"></div>
-            </div>
-
-            <div class="ring"></div>
-          </div>
+        <div class="hero-actions">
+          <a class="btn primary" href="quote.html">Request a Quote</a>
+          <a class="btn" href="https://wa.me/27615224124" target="_blank" rel="noopener">WhatsApp Us</a>
+          <a class="btn ghost" href="services.html">View Services</a>
         </div>
       </div>
 
-      <!-- Feature bar -->
-      <div class="container feature-bar">
-        <div class="feature">
-          <span class="icon" aria-hidden="true">🎫</span>
-          <span>Unique Ticket IDs</span>
+      <div class="visual" aria-label="Visual">
+        <div class="ring" aria-hidden="true"></div>
+        <div class="art">
+          <img src="social-card.svg" alt="AlphaWave visual" />
         </div>
-        <div class="feature">
-          <span class="icon" aria-hidden="true">💬</span>
-          <span>Contact via WhatsApp</span>
-        </div>
-        <div class="feature">
-          <span class="icon" aria-hidden="true">⚡</span>
-          <span>Quick &amp; Local Service</span>
-        </div>
-        <div class="feature">
-          <span class="icon" aria-hidden="true">💲</span>
-          <span>No Hidden Fees</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Services -->
-    <section id="services" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Our Services</h2>
-          <p>Clear options, fast turnaround, and support that actually helps.</p>
-        </div>
-
-        <div class="cards">
-          <article class="card">
-            <div class="card-icon" aria-hidden="true">📱</div>
-            <h3>Phone Repairs<br/><span>&amp; Support</span></h3>
-            <p>Battery, software, repairs, and general support.</p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon" aria-hidden="true">💻</div>
-            <h3>Computer<br/><span>Repairs &amp; Services</span></h3>
-            <p>Virus removal, tune-ups, Windows help, and installs.</p>
-          </article>
-
-          <article class="card card-accent">
-            <div class="card-icon" aria-hidden="true">📶</div>
-            <h3>Wi-Fi &amp;<br/><span>Smart TV</span></h3>
-            <p>Wi-Fi, router &amp; Smart TV setup + troubleshooting.</p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon" aria-hidden="true">📺</div>
-            <h3>IPTV Setup<br/><span>&amp; Streaming Support</span></h3>
-            <p>Player setup, device linking, buffering fixes, Wi-Fi optimisation.</p>
-          </article>
-        </div>
-
-        <div class="center">
-          <a class="btn btn-outline" href="#pricing">All Services &amp; Pricing</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pricing -->
-    <section id="pricing" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Pricing</h2>
-          <p>Simple pricing. Quotes depend on device and issue.</p>
-        </div>
-
-        <div class="pricing-grid">
-          <div class="price-card">
-            <h3>Quick Check</h3>
-            <p class="muted">Basic diagnostics / assessment</p>
-            <div class="price">From R0–R150</div>
-            <ul>
-              <li>Problem identification</li>
-              <li>Best option advice</li>
-              <li>Time estimate</li>
-            </ul>
-            <a class="btn btn-primary" href="#contact">Get a Quote</a>
-          </div>
-
-          <div class="price-card">
-            <h3>Standard Fix</h3>
-            <p class="muted">Common repairs and software work</p>
-            <div class="price">From R250+</div>
-            <ul>
-              <li>Software cleanup</li>
-              <li>Installations &amp; setup</li>
-              <li>Wi-Fi troubleshooting</li>
-            </ul>
-            <a class="btn btn-ghost" href="#contact">Request Help</a>
-          </div>
-
-          <div class="price-card highlight">
-            <h3>IPTV Assist</h3>
-            <p class="muted">Setup + streaming optimisation</p>
-            <div class="price">From R200+</div>
-            <ul>
-              <li>App / player setup</li>
-              <li>Buffering &amp; quality fixes</li>
-              <li>Router placement tips</li>
-            </ul>
-            <a class="btn btn-primary" href="#contact">Book IPTV Setup</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Track Ticket -->
-    <section id="track" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Track Ticket</h2>
-          <p>Enter your ticket ID to check status (demo UI — you can connect a real backend later).</p>
-        </div>
-
-        <form class="track-form" id="trackForm">
-          <label class="sr-only" for="ticketId">Ticket ID</label>
-          <input id="ticketId" name="ticketId" type="text" placeholder="e.g. AW-10293" minlength="3" required />
-          <button class="btn btn-primary" type="submit">Check Status</button>
-        </form>
-
-        <div class="track-result" id="trackResult" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Contact Us</h2>
-          <p>Fast quotes • Local support • No logins needed</p>
-        </div>
-
-        <div class="contact-card">
-          <div class="contact-left">
-            <div class="avatar" aria-hidden="true"></div>
-            <div>
-              <div class="contact-name">Leando Arthur Thys</div>
-              <div class="contact-meta">Tech Support • Elim</div>
-            </div>
-          </div>
-
-          <div class="contact-lines">
-            <a class="contact-line" href="tel:+27615224124">
-              <span class="mini-ico" aria-hidden="true">📞</span>
-              <span>+27 61 522 4124</span>
-            </a>
-            <a class="contact-line" href="mailto:solutionsalphawave@gmail.com">
-              <span class="mini-ico" aria-hidden="true">✉️</span>
-              <span>solutionsalphawave@gmail.com</span>
-            </a>
-            <div class="contact-line">
-              <span class="mini-ico" aria-hidden="true">📍</span>
-              <span>16 King Street, Elim, Western Cape, South Africa</span>
-            </div>
-          </div>
-
-          <div class="contact-actions">
-            <a class="btn btn-primary" href="#pricing">See full services and pricing</a>
-            <a class="btn btn-ghost" id="whatsappBtn2" href="#" rel="noopener">WhatsApp now</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Privacy -->
-    <section id="privacy" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Privacy</h2>
-          <p class="muted">
-            We only use your contact details to respond to your request and provide support.
-            We do not sell your data.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer-row">
-      <div class="muted">© <span id="year"></span> AlphaWave Solutions • Elim • Western Cape</div>
-      <div class="footer-links">
-        <a href="#services">Services</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#track">Track Ticket</a>
-        <a href="#privacy">Privacy</a>
       </div>
     </div>
-  </footer>
 
-  <script src="script.js"></script>
+    <div class="container">
+      <div class="pills" role="list">
+        <div class="pill" role="listitem"><div class="icon">🧾</div> Unique Ticket IDs</div>
+        <div class="pill" role="listitem"><div class="icon">💬</div> Contact via WhatsApp</div>
+        <div class="pill" role="listitem"><div class="icon">⚡</div> Quick &amp; Local Service</div>
+        <div class="pill" role="listitem"><div class="icon">💸</div> No Hidden Fees</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Our Services</h2>
+
+      <div class="cards">
+        <article class="card">
+          <div class="top"><div class="ico">📱</div><h3>Phone Repairs &amp; Support</h3></div>
+          <p>Battery checks, software issues, updates, storage cleanup, app setup, and general support.</p>
+        </article>
+
+        <article class="card">
+          <div class="top"><div class="ico">💻</div><h3>Computer Repairs &amp; Services</h3></div>
+          <p>Virus removal, tune-ups, Windows help, printer setup, backups, and performance optimization.</p>
+        </article>
+
+        <article class="card">
+          <div class="top"><div class="ico">📶</div><h3>Wi-Fi &amp; Smart TV</h3></div>
+          <p>Wi-Fi/router setup and troubleshooting, Smart TV configuration, and streaming support.</p>
+        </article>
+      </div>
+
+      <div class="center-actions">
+        <a class="btn" href="pricing.html">See Pricing →</a>
+      </div>
+
+      <p class="note" style="text-align:center; margin-top:14px;">
+        Streaming / IPTV note: We provide device setup &amp; troubleshooting for <b>legal, licensed subscriptions only</b>.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container foot">
+    <div>© <span data-year></span> AlphaWave Solutions • Elim • Western Cape</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <a href="services.html">Services</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="quote.html">Request a Quote</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
 </body>
 </html>
