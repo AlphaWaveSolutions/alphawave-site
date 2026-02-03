@@ -243,7 +243,7 @@ Problem:`;
     const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
     if (!url) throw new Error("Missing TICKETS_API_URL in assets/config.js");
 
-    const u = `${url}?id=${encodeURIComponent(id)}`;
+    const u = `${url}?ticketId=${encodeURIComponent(id)}`;
     const res = await fetch(u, { method: "GET" });
     const data = await res.json();
     if (!data || data.ok !== true) throw new Error((data && data.error) ? data.error : "Remote not found");
@@ -280,7 +280,7 @@ Problem:`;
 
   // Auto-track if URL has ?id=...
   const params = new URLSearchParams(location.search);
-  const qid = norm(params.get("id"));
+  const qid = norm(params.get("ticketId") || params.get("id"));
   if (qid) {
     ticketInput.value = qid;
     track();
@@ -290,3 +290,4 @@ Problem:`;
 
 </body>
 </html>
+
