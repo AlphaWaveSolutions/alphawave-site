@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Track Ticket | AlphaWave Solutions</title>
-  <meta name="description" content="Track your AlphaWave ticket using your Quote/Ticket ID." />
+  <meta name="description" content="Track your AlphaWave ticket using your Ticket ID." />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="assets/styles.css" />
@@ -51,21 +51,20 @@
   <div class="container">
     <h2>Track Ticket</h2>
     <p class="sub" style="text-align:center; margin: 0 auto 18px;">
-      Enter your Ticket / Quote ID (example: <b>Q-AB12CD34</b>) to view the saved request.
+      Enter your Ticket ID (example: <b>Q-AB12CD34</b>) to view progress.
     </p>
 
     <div class="panel form">
       <div class="grid-2">
         <div>
-          <label>Ticket / Quote ID</label>
+          <label>Ticket ID</label>
           <input id="ticketId" placeholder="e.g. Q-AB12CD34" autocomplete="off" />
         </div>
         <div>
           <label>Actions</label>
           <div class="actions" style="margin-top:0;">
             <button class="btn primary" type="button" id="btnTrack">Track</button>
-            <button class="btn" type="button" id="btnShowLast">Show Last Saved</button>
-            <button class="btn ghost" type="button" id="btnClear">Clear</button>
+            <button class="btn" type="button" id="btnClear">Clear</button>
           </div>
         </div>
       </div>
@@ -82,30 +81,34 @@
           <div class="cards" style="grid-template-columns: 1fr 1fr; gap:12px;">
             <div class="card" style="min-height:auto; box-shadow:none;">
               <p class="note" style="margin:0;"><b>Ticket ID:</b> <span id="outId"></span></p>
-              <p class="note" style="margin:8px 0 0;"><b>Time:</b> <span id="outTime"></span></p>
-              <p class="note" style="margin:8px 0 0;"><b>Name:</b> <span id="outName"></span></p>
-              <p class="note" style="margin:8px 0 0;"><b>Phone:</b> <span id="outPhone"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Submitted:</b> <span id="outSubmitted"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Last Updated:</b> <span id="outUpdated"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Status:</b> <span id="outStatus"></span></p>
             </div>
 
             <div class="card" style="min-height:auto; box-shadow:none;">
-              <p class="note" style="margin:0;"><b>Service:</b> <span id="outService"></span></p>
+              <p class="note" style="margin:0;"><b>Name:</b> <span id="outName"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Phone:</b> <span id="outPhone"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Service:</b> <span id="outService"></span></p>
               <p class="note" style="margin:8px 0 0;"><b>Device:</b> <span id="outDevice"></span></p>
               <p class="note" style="margin:8px 0 0;"><b>Preferred:</b> <span id="outPref"></span></p>
-              <p class="note" style="margin:8px 0 0;"><b>Issue:</b></p>
-              <div class="note" id="outIssue" style="white-space:pre-wrap; margin-top:6px;"></div>
             </div>
           </div>
+
+          <p class="note" style="margin-top:12px;"><b>Issue:</b></p>
+          <div class="note" id="outIssue" style="white-space:pre-wrap; margin-top:6px;"></div>
 
           <div class="actions" style="margin-top:14px;">
             <a class="btn" id="btnWA" target="_blank" rel="noopener">WhatsApp Support</a>
             <a class="btn ghost" href="quote.html">Request Another Quote</a>
           </div>
+
+          <p class="note" id="sourceHint" style="margin-top:12px;"></p>
         </div>
       </div>
 
       <p class="note" style="margin-top:14px;">
-        <b>Note:</b> This tracking works for tickets saved on <b>this device/browser</b>.  
-        If you’re tracking from a different phone/PC, please WhatsApp us with your details.
+        If you can’t find your ticket, please WhatsApp us your Ticket ID and details.
       </p>
     </div>
   </div>
@@ -123,81 +126,98 @@
   </div>
 </footer>
 
+<script src="assets/config.js"></script>
 <script src="assets/main.js"></script>
 
 <script>
 (() => {
   const WA_NUMBER = "27615224124";
-  const KEY = "alphawave_quotes";
+  const LOCAL_KEY = "alphawave_quotes";
 
   const $ = (id) => document.getElementById(id);
-
-  const ticketId = $("ticketId");
+  const ticketInput = $("ticketId");
   const wrap = $("resultWrap");
-  const statusLine = $("statusLine");
+  const sourceHint = $("sourceHint");
 
-  function loadAll() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
-    catch { return []; }
-  }
+  function norm(v){ return String(v || "").trim().toUpperCase(); }
 
-  function normalizeId(v) {
-    return (v || "").trim().toUpperCase();
-  }
-
-  function fmtTime(iso) {
+  function fmt(iso) {
+    if (!iso) return "-";
     try {
       const d = new Date(iso);
       return d.toLocaleString("en-ZA", { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
     } catch {
-      return iso || "-";
+      return iso;
     }
   }
 
-  function show(record) {
+  function setText(id, v){ $(id).textContent = v || "-"; }
+
+  function showRecord(rec, sourceLabel) {
     wrap.style.display = "block";
 
-    $("outId").textContent = record.id || "-";
-    $("outTime").textContent = fmtTime(record.createdAt);
-    $("outName").textContent = record.name || "-";
-    $("outPhone").textContent = record.phone || "-";
-    $("outService").textContent = record.service || "-";
-    $("outDevice").textContent = record.device || "-";
-    $("outPref").textContent = record.pref || "-";
-    $("outIssue").textContent = record.issue || "-";
+    // Support BOTH formats:
+    // - our website format: {id, createdAt, name, phone, service, device, pref, issue, status}
+    // - Apps Script title-case mapped format: {ticketId, submittedAt, customerName, ...}
+    const ticketId = rec.ticketId || rec.id;
+    const submittedAt = rec.submittedAt || rec.createdAt;
+    const updatedAt = rec.lastUpdatedAt || rec.lastUpdatedAt || rec.updatedAt || "";
 
-    // Simple status model (can be upgraded later)
-    statusLine.innerHTML = "Status: <b>Received</b> ✅ (We will confirm pricing before starting.)";
+    const name = rec.customerName || rec.name;
+    const phone = rec.phoneNumber || rec.phone;
+    const service = rec.serviceRequested || rec.service;
+    const device = rec.deviceDetails || rec.device;
+    const pref = rec.preferredContact || rec.pref;
+    const issue = rec.issueDescription || rec.issue;
 
-    const msg =
+    const status = rec.status || "Received";
+
+    setText("outId", ticketId);
+    setText("outSubmitted", fmt(submittedAt));
+    setText("outUpdated", fmt(updatedAt));
+    setText("outStatus", status);
+
+    setText("outName", name);
+    setText("outPhone", phone);
+    setText("outService", service);
+    setText("outDevice", device);
+    setText("outPref", pref);
+    $("outIssue").textContent = issue || "-";
+
+    $("statusLine").innerHTML = `Status: <b>${status}</b> ✅`;
+
+    const waMsg =
 `Hi AlphaWave Solutions,
-I want to track my ticket.
+I want an update on my ticket.
 
-Ticket ID: ${record.id || "-"}
-Name: ${record.name || "-"}
-Phone: ${record.phone || "-"}`;
+Ticket ID: ${ticketId}
+Name: ${name || "-"}
+Phone: ${phone || "-"}`;
 
-    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMsg)}`;
+
+    sourceHint.textContent = sourceLabel;
   }
 
-  function notFound(id) {
+  function showNotFound(id) {
     wrap.style.display = "block";
-    $("outId").textContent = id || "-";
-    $("outTime").textContent = "-";
-    $("outName").textContent = "-";
-    $("outPhone").textContent = "-";
-    $("outService").textContent = "-";
-    $("outDevice").textContent = "-";
-    $("outPref").textContent = "-";
+    $("statusLine").innerHTML =
+      `Status: <b>Not Found</b> ⚠️<br/>Please WhatsApp us your Ticket ID and details.`;
+
+    setText("outId", id || "-");
+    setText("outSubmitted", "-");
+    setText("outUpdated", "-");
+    setText("outStatus", "-");
+    setText("outName", "-");
+    setText("outPhone", "-");
+    setText("outService", "-");
+    setText("outDevice", "-");
+    setText("outPref", "-");
     $("outIssue").textContent = "-";
 
-    statusLine.innerHTML =
-      "Status: <b>Not found on this device</b> ⚠️<br/>" +
-      "If you submitted from another phone/PC, please WhatsApp us your name + phone + service.";
-
-    const msg =
+    const waMsg =
 `Hi AlphaWave Solutions,
-My ticket is not showing on this device.
+My ticket is not showing.
 
 Ticket ID: ${id || "-"}
 My name:
@@ -206,44 +226,63 @@ Service:
 Device:
 Problem:`;
 
-    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMsg)}`;
+    sourceHint.textContent = "";
   }
 
-  function track() {
-    const id = normalizeId(ticketId.value);
-    if (!id) { ticketId.focus(); return; }
+  function findLocal(id) {
+    try {
+      const list = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+      return list.find(r => norm(r.id) === id) || null;
+    } catch {
+      return null;
+    }
+  }
 
-    const all = loadAll();
-    const rec = all.find(r => normalizeId(r.id) === id);
+  async function fetchRemote(id) {
+    const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+    if (!url) throw new Error("Missing TICKETS_API_URL in assets/config.js");
 
-    if (rec) show(rec);
-    else notFound(id);
+    const u = `${url}?id=${encodeURIComponent(id)}`;
+    const res = await fetch(u, { method: "GET" });
+    const data = await res.json();
+    if (!data || data.ok !== true) throw new Error((data && data.error) ? data.error : "Remote not found");
+    return data.record;
+  }
+
+  async function track() {
+    const id = norm(ticketInput.value);
+    if (!id) { ticketInput.focus(); return; }
+
+    // 1) Try remote (global)
+    try {
+      const rec = await fetchRemote(id);
+      showRecord(rec, "Source: Global tracking (Google Sheets) ✅");
+      return;
+    } catch (e) {
+      // 2) fallback local
+      const local = findLocal(id);
+      if (local) {
+        showRecord(local, "Source: This device only (local save) ✅");
+        return;
+      }
+      showNotFound(id);
+    }
   }
 
   $("btnTrack").addEventListener("click", track);
-  ticketId.addEventListener("keydown", (e) => { if (e.key === "Enter") track(); });
-
-  $("btnShowLast").addEventListener("click", () => {
-    const all = loadAll();
-    if (all.length) {
-      ticketId.value = all[0].id || "";
-      show(all[0]);
-    } else {
-      notFound("");
-    }
-  });
-
+  ticketInput.addEventListener("keydown", (e) => { if (e.key === "Enter") track(); });
   $("btnClear").addEventListener("click", () => {
-    ticketId.value = "";
+    ticketInput.value = "";
     wrap.style.display = "none";
-    ticketId.focus();
+    ticketInput.focus();
   });
 
-  // If URL has ?id=Q-XXXX, auto track it
+  // Auto-track if URL has ?id=...
   const params = new URLSearchParams(location.search);
-  const qid = normalizeId(params.get("id"));
+  const qid = norm(params.get("id"));
   if (qid) {
-    ticketId.value = qid;
+    ticketInput.value = qid;
     track();
   }
 })();
