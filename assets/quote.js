@@ -22,21 +22,45 @@
     return "";
   }
 
-  function makeTicketId() {
-    return "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase();
-  }
+function makeTicketId() {
+  return "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+}
 
-  function setStatus(text, ticketId) {
-    if (!statusEl) return;
+function saveLocalRecord(record) {
+  const key = "alphawave_quotes";
+  const list = JSON.parse(localStorage.getItem(key) || "[]");
+  list.unshift(record);
+  localStorage.setItem(key, JSON.stringify(list));
+}
 
-    if (!ticketId) {
-      statusEl.textContent = text;
-      return;
-    }
+function fireAndForgetRemote(record) {
+  const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+  if (!url) return;
 
-    const trackUrl = `admin.html?ticketId=${encodeURIComponent(ticketId)}`;
-    statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
-  }
+  // do not await (keeps user-gesture intact for popups)
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(record)
+  }).catch(() => {});
+}
+
+function gmailComposeUrl(to, subject, body) {
+  return (
+    "https://mail.google.com/mail/?view=cm&fs=1" +
+    `&to=${encodeURIComponent(to)}` +
+    `&su=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(body)}`
+  );
+}
+
+function setStatus(text, ticketId) {
+  const statusEl = document.getElementById("q_status");
+  if (!statusEl) return;
+  if (!ticketId) { statusEl.textContent = text; return; }
+  const trackUrl = `admin.html?ticketId=${encodeURIComponent(ticketId)}`;
+  statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
+}
 
   function formatMessage(d, ticketId) {
     return (
@@ -131,27 +155,45 @@ Thank you.`
     else setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 
-  $("btn_email")?.addEventListener("click", async () => {
-    const d = getData();
-    const err = validate(d);
-    if (err) { setStatus(err); return; }
+$("btn_email")?.addEventListener("click", () => {
+  const d = getData();
+  const err = validate(d);
+  if (err) { setStatus(err); return; }
 
-    setStatus("Preparing Email…");
-    const { ticketId, remoteOk } = await createTicket(d);
+  // Create ticket immediately (no await)
+  const ticketId = makeTicketId();
 
-const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
-const body = formatMessage(d, ticketId);
+  const record = {
+    id: ticketId,
+    createdAt: new Date().toISOString(),
+    name: d.name,
+    phone: d.phone,
+    service: d.service,
+    device: d.device,
+    pref: d.pref,
+    issue: d.issue,
+    status: "Received"
+  };
 
-const gmailUrl =
-  "https://mail.google.com/mail/?view=cm&fs=1" +
-  `&to=${encodeURIComponent(EMAIL_TO)}` +
-  `&su=${encodeURIComponent(subject)}` +
-  `&body=${encodeURIComponent(body)}`;
+  // Save local + remote (remote is fire-and-forget)
+  saveLocalRecord(record);
+  fireAndForgetRemote(record);
 
-window.open(gmailUrl, "_blank", "noopener");
+  // Open Gmail compose immediately (same tab = avoids popup blockers)
+  const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
+  const body = formatMessage(d, ticketId);
+
+  const url = gmailComposeUrl("solutionsalphawave@gmail.com", subject, body);
+  window.location.href = url;
+
+  // Status message (note: user must click Send in Gmail)
+  setStatus(`Email draft opened ✅ Ticket ID: ${ticketId} (tap Send in Gmail)`, ticketId);
+});
+
 
     if (remoteOk) setStatus(`Opened Email ✅ Ticket ID: ${ticketId}`, ticketId);
     else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 })();
+
 
