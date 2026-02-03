@@ -1,17 +1,18 @@
 (() => {
   const $ = (id) => document.getElementById(id);
 
-  const status = $("q_status");
+  const statusEl = $("q_status");
   const WA_NUMBER = "27615224124";
   const EMAIL_TO  = "solutionsalphawave@gmail.com";
+  const LOCAL_KEY = "alphawave_quotes";
 
   function getData() {
-    const name = ($("q_name").value || "").trim();
-    const phone = ($("q_phone").value || "").trim();
-    const service = $("q_service").value;
-    const device = ($("q_device").value || "").trim();
-    const pref = $("q_pref").value;
-    const issue = ($("q_issue").value || "").trim();
+    const name = ($("q_name")?.value || "").trim();
+    const phone = ($("q_phone")?.value || "").trim();
+    const service = $("q_service")?.value || "";
+    const device = ($("q_device")?.value || "").trim();
+    const pref = $("q_pref")?.value || "";
+    const issue = ($("q_issue")?.value || "").trim();
 
     return { name, phone, service, device, pref, issue };
   }
@@ -22,12 +23,12 @@
     return "";
   }
 
-  function formatMessage(d) {
-    // Keep clean, professional, copyable
+  function formatMessage(d, ticketId) {
     return (
 `Hi AlphaWave Solutions,
 Please can I get a quote?
 
+Ticket ID: ${ticketId}
 Name: ${d.name}
 Phone: ${d.phone || "-"}
 Service: ${d.service}
@@ -41,92 +42,126 @@ Thank you.`
     );
   }
 
-  function saveLocal(d) {
-async function saveRemote(record) {
-  const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
-  if (!url) return { ok:false, error:"Missing TICKETS_API_URL" };
+  function setStatus(text, ticketId) {
+    if (!statusEl) return;
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(record)
-  });
+    if (!ticketId) {
+      statusEl.textContent = text;
+      return;
+    }
 
-  return await res.json();
-}
+    const trackUrl = `admin.html?id=${encodeURIComponent(ticketId)}`;
+    statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
+  }
 
+  function makeTicketId() {
+    return "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  }
+
+  function saveLocalRecord(record) {
+    const list = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
+    list.unshift(record);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+  }
+
+  async function saveRemoteRecord(record) {
+    // Uses window.ALPHAWAVE.TICKETS_API_URL from assets/config.js
+    const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+    if (!url) return { ok: false, error: "Missing TICKETS_API_URL in assets/config.js" };
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
+    });
+
+    // Apps Script returns JSON
+    return await res.json();
+  }
+
+  async function createTicket(d) {
+    // One ticket record object used for local + remote + messaging
+    const ticketId = makeTicketId();
+
+    // Keep field names simple; Apps Script maps these to Title Case headers
     const record = {
-      id: "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
+      id: ticketId,
       createdAt: new Date().toISOString(),
-      ...d
+      name: d.name,
+      phone: d.phone,
+      service: d.service,
+      device: d.device,
+      pref: d.pref,
+      issue: d.issue,
+      status: "Received"
     };
 
-    list.unshift(record);
-    localStorage.setItem(key, JSON.stringify(list));
-    return record.id;
+    // Save locally
+    saveLocalRecord(record);
+
+    // Save remotely (Sheets) — do not block the user if it fails
+    try {
+      const r = await saveRemoteRecord(record);
+      if (!r || r.ok !== true) {
+        // Remote failed; keep local anyway
+        return { ticketId, record, remoteOk: false, remoteError: (r && r.error) ? r.error : "Remote save failed" };
+      }
+      return { ticketId, record, remoteOk: true };
+    } catch (e) {
+      return { ticketId, record, remoteOk: false, remoteError: String(e) };
+    }
   }
 
-function setStatus(text, id) {
-  if (!status) return;
-
-  if (!id) {
-    status.textContent = text;
-    return;
-  }
-
-  const trackUrl = `admin.html?id=${encodeURIComponent(id)}`;
-  status.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
-}
-
-  $("btn_save")?.addEventListener("click", () => {
+  // SAVE ONLY (C)
+  $("btn_save")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
-    const id = saveLocal(d);
-   setStatus(`Saved locally ✅ Quote ID: ${id}`, id);
+
+    setStatus("Saving…");
+    const { ticketId, remoteOk } = await createTicket(d);
+
+    if (remoteOk) setStatus(`Saved ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Saved locally ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 
-  $("btn_whatsapp")?.addEventListener("click", () => {
+  // WHATSAPP (A)
+  $("btn_whatsapp")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
-    const id = saveLocal(d);
-    const msg = formatMessage(d) + `\n\nLocal Quote ID: ${id}`;
-    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, "_blank", "noopener");
-    setStatus(`Opened WhatsApp ✅ Saved locally (Quote ID: ${id})`, id);
+    setStatus("Preparing WhatsApp…");
+    const { ticketId, remoteOk } = await createTicket(d);
+
+    const msg = formatMessage(d, ticketId);
+    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, "_blank", "noopener");
+
+    if (remoteOk) setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 
-  $("btn_email")?.addEventListener("click", () => {
+  // EMAIL (B)
+  $("btn_email")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
-    const id = saveLocal(d);
- const record = {
-  id: "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
-  createdAt: new Date().toISOString(),
-  ...d
-};
+    setStatus("Preparing Email…");
+    const { ticketId, remoteOk } = await createTicket(d);
 
-// save local
-const key = "alphawave_quotes";
-const list = JSON.parse(localStorage.getItem(key) || "[]");
-list.unshift(record);
-localStorage.setItem(key, JSON.stringify(list));
+    const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
+    const body = formatMessage(d, ticketId);
 
-const id = record.id;
+    const mailtoUrl =
+      `mailto:${encodeURIComponent(EMAIL_TO)}` +
+      `?subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
 
-// save remote (sheets)
-try { await saveRemote(record); } catch(e) {}
+    window.location.href = mailtoUrl;
 
-    // mail to is best for a static site (no backend needed)
-    const url = `mailto:${encodeURIComponent(EMAIL_TO)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = url;
-
-   setStatus(`Opened Email ✅ Saved locally (Quote ID: ${id})`, id);
+    if (remoteOk) setStatus(`Opened Email ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 })();
-
-
