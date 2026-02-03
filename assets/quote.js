@@ -50,7 +50,7 @@ Thank you.`
       return;
     }
 
-    const trackUrl = `admin.html?id=${encodeURIComponent(ticketId)}`;
+    const trackUrl = `admin.html?ticketId=${encodeURIComponent(ticketId)}`;
     statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
   }
 
@@ -165,3 +165,4 @@ Thank you.`
     else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 })();
+
