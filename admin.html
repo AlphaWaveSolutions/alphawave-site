@@ -257,7 +257,7 @@ Problem:`;
     // 1) Try remote (global)
     try {
       const rec = await fetchRemote(id);
-      showRecord(rec, "Source: Global tracking (Google Sheets) ✅");
+      showRecord(rec, "Source: Tracking: Live Status ✅");
       return;
     } catch (e) {
       // 2) fallback local
@@ -290,4 +290,5 @@ Problem:`;
 
 </body>
 </html>
+
 
