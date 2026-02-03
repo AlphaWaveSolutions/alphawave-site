@@ -56,16 +56,24 @@ Thank you.`
     return record.id;
   }
 
-  function setStatus(text) {
-    if (status) status.textContent = text;
+function setStatus(text, id) {
+  if (!status) return;
+
+  if (!id) {
+    status.textContent = text;
+    return;
   }
+
+  const trackUrl = `admin.html?id=${encodeURIComponent(id)}`;
+  status.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
+}
 
   $("btn_save")?.addEventListener("click", () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
     const id = saveLocal(d);
-    setStatus(`Saved locally ✅ Quote ID: ${id}`);
+   setStatus(`Saved locally ✅ Quote ID: ${id}`, id);
   });
 
   $("btn_whatsapp")?.addEventListener("click", () => {
@@ -77,7 +85,7 @@ Thank you.`
     const msg = formatMessage(d) + `\n\nLocal Quote ID: ${id}`;
     const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank", "noopener");
-    setStatus(`Opened WhatsApp ✅ Saved locally (Quote ID: ${id})`);
+    setStatus(`Opened WhatsApp ✅ Saved locally (Quote ID: ${id})`, id);
   });
 
   $("btn_email")?.addEventListener("click", () => {
@@ -93,6 +101,7 @@ Thank you.`
     const url = `mailto:${encodeURIComponent(EMAIL_TO)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = url;
 
-    setStatus(`Opened Email ✅ Saved locally (Quote ID: ${id})`);
+   setStatus(`Opened Email ✅ Saved locally (Quote ID: ${id})`, id);
   });
 })();
+
