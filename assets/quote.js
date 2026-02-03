@@ -139,15 +139,19 @@ Thank you.`
     setStatus("Preparing Email…");
     const { ticketId, remoteOk } = await createTicket(d);
 
-    const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
-    const body = formatMessage(d, ticketId);
+const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
+const body = formatMessage(d, ticketId);
 
-    const mailtoUrl =
-      `mailto:${encodeURIComponent(EMAIL_TO)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const gmailUrl =
+  "https://mail.google.com/mail/?view=cm&fs=1" +
+  `&to=${encodeURIComponent(EMAIL_TO)}` +
+  `&su=${encodeURIComponent(subject)}` +
+  `&body=${encodeURIComponent(body)}`;
 
-    window.location.href = mailtoUrl;
+window.open(gmailUrl, "_blank", "noopener");
 
     if (remoteOk) setStatus(`Opened Email ✅ Ticket ID: ${ticketId}`, ticketId);
     else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
   });
 })();
+
