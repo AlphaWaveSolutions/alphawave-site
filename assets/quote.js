@@ -13,7 +13,6 @@
     const device = ($("q_device")?.value || "").trim();
     const pref = $("q_pref")?.value || "";
     const issue = ($("q_issue")?.value || "").trim();
-
     return { name, phone, service, device, pref, issue };
   }
 
@@ -21,6 +20,22 @@
     if (!d.name) return "Please enter your name.";
     if (!d.issue) return "Please describe the problem.";
     return "";
+  }
+
+  function makeTicketId() {
+    return "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  }
+
+  function setStatus(text, ticketId) {
+    if (!statusEl) return;
+
+    if (!ticketId) {
+      statusEl.textContent = text;
+      return;
+    }
+
+    const trackUrl = `admin.html?ticketId=${encodeURIComponent(ticketId)}`;
+    statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
   }
 
   function formatMessage(d, ticketId) {
@@ -42,49 +57,50 @@ Thank you.`
     );
   }
 
-  function setStatus(text, ticketId) {
-    if (!statusEl) return;
-
-    if (!ticketId) {
-      statusEl.textContent = text;
-      return;
-    }
-
-    const trackUrl = `admin.html?ticketId=${encodeURIComponent(ticketId)}`;
-    statusEl.innerHTML = `${text} • <a href="${trackUrl}">Track Ticket →</a>`;
-  }
-
-  function makeTicketId() {
-    return "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase();
-  }
-
   function saveLocalRecord(record) {
     const list = JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
     list.unshift(record);
     localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
   }
 
-  async function saveRemoteRecord(record) {
-    // Uses window.ALPHAWAVE.TICKETS_API_URL from assets/config.js
-    const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+  function getApiUrl() {
+    return window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+  }
+
+  // ✅ Remote save designed for static sites:
+  // - Prefer sendBeacon (no CORS readback needed)
+  // - Fallback to fetch no-cors (fire-and-forget)
+  async function sendRemoteRecord(record) {
+    const url = getApiUrl();
     if (!url) return { ok: false, error: "Missing TICKETS_API_URL in assets/config.js" };
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(record)
-    });
+    try {
+      // Best option: sendBeacon
+      if (navigator.sendBeacon) {
+        const blob = new Blob([JSON.stringify(record)], { type: "application/json" });
+        const sent = navigator.sendBeacon(url, blob);
+        return sent ? { ok: true, mode: "beacon" } : { ok: false, error: "sendBeacon failed" };
+      }
 
-    // Apps Script returns JSON
-    return await res.json();
+      // Fallback: fetch without reading response
+      await fetch(url, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record)
+      });
+
+      return { ok: true, mode: "no-cors" };
+    } catch (e) {
+      return { ok: false, error: String(e) };
+    }
   }
 
   async function createTicket(d) {
-    // One ticket record object used for local + remote + messaging
     const ticketId = makeTicketId();
 
-    // Keep field names simple; Apps Script maps these to Title Case headers
     const record = {
+      // website fields (Apps Script maps these)
       id: ticketId,
       createdAt: new Date().toISOString(),
       name: d.name,
@@ -96,60 +112,50 @@ Thank you.`
       status: "Received"
     };
 
-    // Save locally
     saveLocalRecord(record);
 
-    // Save remotely (Sheets) — do not block the user if it fails
-    try {
-      const r = await saveRemoteRecord(record);
-      if (!r || r.ok !== true) {
-        // Remote failed; keep local anyway
-        return { ticketId, record, remoteOk: false, remoteError: (r && r.error) ? r.error : "Remote save failed" };
-      }
-      return { ticketId, record, remoteOk: true };
-    } catch (e) {
-      return { ticketId, record, remoteOk: false, remoteError: String(e) };
-    }
+    const remote = await sendRemoteRecord(record);
+    return { ticketId, record, remote };
   }
 
-  // SAVE ONLY (C)
+  // SAVE (Local + Remote)
   $("btn_save")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
     setStatus("Saving…");
-    const { ticketId, remoteOk } = await createTicket(d);
+    const { ticketId, remote } = await createTicket(d);
 
-    if (remoteOk) setStatus(`Saved ✅ Ticket ID: ${ticketId}`, ticketId);
-    else setStatus(`Saved locally ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
+    if (remote.ok) setStatus(`Saved ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Saved locally ✅ Ticket ID: ${ticketId} (Remote Sync: Pending)`, ticketId);
   });
 
-  // WHATSAPP (A)
+  // WHATSAPP
   $("btn_whatsapp")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
     setStatus("Preparing WhatsApp…");
-    const { ticketId, remoteOk } = await createTicket(d);
+    const { ticketId, remote } = await createTicket(d);
 
     const msg = formatMessage(d, ticketId);
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(waUrl, "_blank", "noopener");
 
-    if (remoteOk) setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId}`, ticketId);
-    else setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
+    if (remote.ok) setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId} (Remote Sync: Pending)`, ticketId);
   });
 
-  // EMAIL (B)
+  // EMAIL
   $("btn_email")?.addEventListener("click", async () => {
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
     setStatus("Preparing Email…");
-    const { ticketId, remoteOk } = await createTicket(d);
+    const { ticketId, remote } = await createTicket(d);
 
     const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
     const body = formatMessage(d, ticketId);
@@ -161,8 +167,7 @@ Thank you.`
 
     window.location.href = mailtoUrl;
 
-    if (remoteOk) setStatus(`Opened Email ✅ Ticket ID: ${ticketId}`, ticketId);
-    else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (remote sync pending)`, ticketId);
+    if (remote.ok) setStatus(`Opened Email ✅ Ticket ID: ${ticketId}`, ticketId);
+    else setStatus(`Opened Email ✅ Ticket ID: ${ticketId} (Remote Sync: Pending)`, ticketId);
   });
 })();
-
