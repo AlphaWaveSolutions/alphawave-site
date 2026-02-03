@@ -1,14 +1,4 @@
-// assets/config.js
-
-window.ALPHAWAVE_CONFIG = {
-  GAS_ENDPOINT: "https://alphawave-cors.solutionsalphawave.workers.dev/",
-  ADMIN_TOKEN: "aw_admin_9f3b1d6c2e7a4baf8a9d",
-  BUSINESS: {
-    name: "AlphaWave Solutions",
-    owner: "Leando Arthur Thys",
-    address: "16 King Street, Elim, Western Cape, South Africa",
-    phone: "+27 61 522 4124",
-    email: "solutionsalphawave@gmail.com"
-  }
+// AlphaWave public API config
+window.ALPHAWAVE = {
+  TICKETS_API_URL: "https://script.google.com/macros/s/AKfycbwouHbugtafQbUOpZ0-XY5l667ahSet4EUqPrcf-D6BmcG6xchC897E9X44FooeQG9O/exec"
 };
-
