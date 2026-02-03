@@ -42,8 +42,18 @@ Thank you.`
   }
 
   function saveLocal(d) {
-    const key = "alphawave_quotes";
-    const list = JSON.parse(localStorage.getItem(key) || "[]");
+async function saveRemote(record) {
+  const url = window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
+  if (!url) return { ok:false, error:"Missing TICKETS_API_URL" };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(record)
+  });
+
+  return await res.json();
+}
 
     const record = {
       id: "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
@@ -94,14 +104,29 @@ function setStatus(text, id) {
     if (err) { setStatus(err); return; }
 
     const id = saveLocal(d);
-    const subject = `Quote Request - ${d.service} (ID: ${id})`;
-    const body = formatMessage(d) + `\n\nLocal Quote ID: ${id}`;
+ const record = {
+  id: "Q-" + Math.random().toString(36).slice(2, 10).toUpperCase(),
+  createdAt: new Date().toISOString(),
+  ...d
+};
 
-    // mailto is best for a static site (no backend needed)
+// save local
+const key = "alphawave_quotes";
+const list = JSON.parse(localStorage.getItem(key) || "[]");
+list.unshift(record);
+localStorage.setItem(key, JSON.stringify(list));
+
+const id = record.id;
+
+// save remote (sheets)
+try { await saveRemote(record); } catch(e) {}
+
+    // mail to is best for a static site (no backend needed)
     const url = `mailto:${encodeURIComponent(EMAIL_TO)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = url;
 
    setStatus(`Opened Email ✅ Saved locally (Quote ID: ${id})`, id);
   });
 })();
+
 
