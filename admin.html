@@ -3,78 +3,251 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin | AlphaWave Solutions</title>
-  <meta name="robots" content="noindex,nofollow" />
- <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-<link rel="manifest" href="manifest.webmanifest" />
-<link rel="stylesheet" href="assets/styles.css" />
-  <script src="assets/config.js"></script>
-  <script type="module" src="assets/admin.js"></script>
+  <title>Track Ticket | AlphaWave Solutions</title>
+  <meta name="description" content="Track your AlphaWave ticket using your Quote/Ticket ID." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
+
 <body>
-  <header class="site-header">
-  <div class="container bar">
-    <a class="brand" href="index.html">
-      <span class="logo" aria-hidden="true"></span>
-      <div>
-        <div class="title">AlphaWave Solutions</div>
-        <div class="sub">Elim • Western Cape</div>
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a class="brand" href="index.html">
+        <img src="assets/favicon.svg" alt="AlphaWave logo" />
+        <div class="title">
+          <b>AlphaWave Solutions</b>
+          <span>Elim • Western Cape</span>
+        </div>
+      </a>
+
+      <div class="menu" aria-label="Primary navigation">
+        <a data-nav href="index.html">Home</a>
+        <a data-nav href="services.html">Services</a>
+        <a data-nav href="pricing.html">Pricing</a>
+        <a data-nav href="admin.html">Track Ticket</a>
+        <a data-nav href="privacy.html">Privacy</a>
       </div>
-    </a>
 
-    <button class="nav-toggle" type="button" id="navToggle" aria-label="Open menu">☰</button>
-
-    <nav class="nav" id="siteNav">
-      <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
-      <a href="pricing.html">Pricing</a>
-      <a class="btn" href="quote.html">Request a Quote</a>
-      <a href="privacy.html">Privacy</a>
+      <div class="nav-actions">
+        <button class="mobile-toggle" data-menu-btn aria-label="Open menu">Menu</button>
+        <a class="btn primary" href="quote.html">Request a Quote →</a>
+      </div>
     </nav>
+
+    <div class="mobile-menu" data-mobile-menu>
+      <a data-nav href="index.html">Home</a>
+      <a data-nav href="services.html">Services</a>
+      <a data-nav href="pricing.html">Pricing</a>
+      <a data-nav href="admin.html">Track Ticket</a>
+      <a data-nav href="privacy.html">Privacy</a>
+      <a class="btn primary wide" href="quote.html">Request a Quote →</a>
+    </div>
   </div>
 </header>
 
-  <main class="container" style="margin-top:18px;">
-    <section class="heroCard">
-      <h1 class="h1">Admin (Hidden)</h1>
-      <p class="lead">
-        This page reads recent submissions from a public JSON endpoint.
-        <b>Note:</b> This is “hidden by URL” only, not secure access control.
-      </p>
-      <div id="adminBanner" class="banner">Loading…</div>
-      <div class="actions" style="margin-top:12px;">
-        <button id="refreshBtn" class="btn primary" type="button">Refresh</button>
-        <a class="btn" href="index.html">Home</a>
+<main class="section">
+  <div class="container">
+    <h2>Track Ticket</h2>
+    <p class="sub" style="text-align:center; margin: 0 auto 18px;">
+      Enter your Ticket / Quote ID (example: <b>Q-AB12CD34</b>) to view the saved request.
+    </p>
+
+    <div class="panel form">
+      <div class="grid-2">
+        <div>
+          <label>Ticket / Quote ID</label>
+          <input id="ticketId" placeholder="e.g. Q-AB12CD34" autocomplete="off" />
+        </div>
+        <div>
+          <label>Actions</label>
+          <div class="actions" style="margin-top:0;">
+            <button class="btn primary" type="button" id="btnTrack">Track</button>
+            <button class="btn" type="button" id="btnShowLast">Show Last Saved</button>
+            <button class="btn ghost" type="button" id="btnClear">Clear</button>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <section class="card" style="margin-top:14px;">
-      <h2 style="margin:0 0 10px;">Recent Quote Requests</h2>
+      <div id="resultWrap" style="margin-top:14px; display:none;">
+        <div class="card" style="min-height:auto;">
+          <div class="top" style="margin-bottom:6px;">
+            <div class="ico">🧾</div>
+            <h3 style="margin:0;">Ticket Details</h3>
+          </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Ticket</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Service</th>
-            <th>Device</th>
-            <th>Preferred</th>
-          </tr>
-        </thead>
-        <tbody id="rows">
-          <tr><td colspan="7">Loading…</td></tr>
-        </tbody>
-      </table>
+          <div class="note" id="statusLine" style="margin:10px 0 12px;"></div>
 
-      <hr class="sep">
-      <p class="note">
-        For full details (issue descriptions), view them directly in Google Sheets (recommended).
+          <div class="cards" style="grid-template-columns: 1fr 1fr; gap:12px;">
+            <div class="card" style="min-height:auto; box-shadow:none;">
+              <p class="note" style="margin:0;"><b>Ticket ID:</b> <span id="outId"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Time:</b> <span id="outTime"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Name:</b> <span id="outName"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Phone:</b> <span id="outPhone"></span></p>
+            </div>
+
+            <div class="card" style="min-height:auto; box-shadow:none;">
+              <p class="note" style="margin:0;"><b>Service:</b> <span id="outService"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Device:</b> <span id="outDevice"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Preferred:</b> <span id="outPref"></span></p>
+              <p class="note" style="margin:8px 0 0;"><b>Issue:</b></p>
+              <div class="note" id="outIssue" style="white-space:pre-wrap; margin-top:6px;"></div>
+            </div>
+          </div>
+
+          <div class="actions" style="margin-top:14px;">
+            <a class="btn" id="btnWA" target="_blank" rel="noopener">WhatsApp Support</a>
+            <a class="btn ghost" href="quote.html">Request Another Quote</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="note" style="margin-top:14px;">
+        <b>Note:</b> This tracking works for tickets saved on <b>this device/browser</b>.  
+        If you’re tracking from a different phone/PC, please WhatsApp us with your details.
       </p>
-    </section>
-  </main>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container foot">
+    <div>© <span data-year></span> AlphaWave Solutions • Elim • Western Cape</div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <a href="services.html">Services</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="admin.html">Track Ticket</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/main.js"></script>
+
+<script>
+(() => {
+  const WA_NUMBER = "27615224124";
+  const KEY = "alphawave_quotes";
+
+  const $ = (id) => document.getElementById(id);
+
+  const ticketId = $("ticketId");
+  const wrap = $("resultWrap");
+  const statusLine = $("statusLine");
+
+  function loadAll() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+    catch { return []; }
+  }
+
+  function normalizeId(v) {
+    return (v || "").trim().toUpperCase();
+  }
+
+  function fmtTime(iso) {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString("en-ZA", { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+    } catch {
+      return iso || "-";
+    }
+  }
+
+  function show(record) {
+    wrap.style.display = "block";
+
+    $("outId").textContent = record.id || "-";
+    $("outTime").textContent = fmtTime(record.createdAt);
+    $("outName").textContent = record.name || "-";
+    $("outPhone").textContent = record.phone || "-";
+    $("outService").textContent = record.service || "-";
+    $("outDevice").textContent = record.device || "-";
+    $("outPref").textContent = record.pref || "-";
+    $("outIssue").textContent = record.issue || "-";
+
+    // Simple status model (can be upgraded later)
+    statusLine.innerHTML = "Status: <b>Received</b> ✅ (We will confirm pricing before starting.)";
+
+    const msg =
+`Hi AlphaWave Solutions,
+I want to track my ticket.
+
+Ticket ID: ${record.id || "-"}
+Name: ${record.name || "-"}
+Phone: ${record.phone || "-"}`;
+
+    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function notFound(id) {
+    wrap.style.display = "block";
+    $("outId").textContent = id || "-";
+    $("outTime").textContent = "-";
+    $("outName").textContent = "-";
+    $("outPhone").textContent = "-";
+    $("outService").textContent = "-";
+    $("outDevice").textContent = "-";
+    $("outPref").textContent = "-";
+    $("outIssue").textContent = "-";
+
+    statusLine.innerHTML =
+      "Status: <b>Not found on this device</b> ⚠️<br/>" +
+      "If you submitted from another phone/PC, please WhatsApp us your name + phone + service.";
+
+    const msg =
+`Hi AlphaWave Solutions,
+My ticket is not showing on this device.
+
+Ticket ID: ${id || "-"}
+My name:
+My phone:
+Service:
+Device:
+Problem:`;
+
+    $("btnWA").href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function track() {
+    const id = normalizeId(ticketId.value);
+    if (!id) { ticketId.focus(); return; }
+
+    const all = loadAll();
+    const rec = all.find(r => normalizeId(r.id) === id);
+
+    if (rec) show(rec);
+    else notFound(id);
+  }
+
+  $("btnTrack").addEventListener("click", track);
+  ticketId.addEventListener("keydown", (e) => { if (e.key === "Enter") track(); });
+
+  $("btnShowLast").addEventListener("click", () => {
+    const all = loadAll();
+    if (all.length) {
+      ticketId.value = all[0].id || "";
+      show(all[0]);
+    } else {
+      notFound("");
+    }
+  });
+
+  $("btnClear").addEventListener("click", () => {
+    ticketId.value = "";
+    wrap.style.display = "none";
+    ticketId.focus();
+  });
+
+  // If URL has ?id=Q-XXXX, auto track it
+  const params = new URLSearchParams(location.search);
+  const qid = normalizeId(params.get("id"));
+  if (qid) {
+    ticketId.value = qid;
+    track();
+  }
+})();
+</script>
+
 </body>
 </html>
-
-
