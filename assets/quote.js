@@ -1,23 +1,40 @@
 (() => {
   const $ = (id) => document.getElementById(id);
 
-  const WA_NUMBER = "27615224124";
-  const EMAIL_TO  = "solutionsalphawave@gmail.com";
-  const LOCAL_KEY = "alphawave_quotes"; // browser storage key (not your Google Sheet name)
+  // Business contact details
+  const WHATSAPP_NUMBER = "27615224124";
+  const SUPPORT_EMAIL   = "solutionsalphawave@gmail.com";
+
+  // Local browser storage key (NOT your Google Sheet name)
+  const LOCAL_KEY = "alphawave_tickets";
+
+  function getApiBase() {
+    // Must be set in assets/config.js:
+    // window.ALPHAWAVE_CONFIG = { API_BASE: "https://your-worker.workers.dev" };
+    return window.ALPHAWAVE_CONFIG?.API_BASE || "";
+  }
 
   function getData() {
-    const name   = ($("q_name")?.value || "").trim();
-    const phone  = ($("q_phone")?.value || "").trim();
-    const service= $("q_service")?.value || "";
-    const device = ($("q_device")?.value || "").trim();
-    const pref   = $("q_pref")?.value || "";
-    const issue  = ($("q_issue")?.value || "").trim();
-    return { name, phone, service, device, pref, issue };
+    const customerName      = ($("q_name")?.value || "").trim();
+    const phoneNumber       = ($("q_phone")?.value || "").trim();
+    const serviceRequested  = $("q_service")?.value || "";
+    const deviceDetails     = ($("q_device")?.value || "").trim();
+    const preferredContact  = $("q_pref")?.value || "";
+    const issueDescription  = ($("q_issue")?.value || "").trim();
+
+    return {
+      customerName,
+      phoneNumber,
+      serviceRequested,
+      deviceDetails,
+      preferredContact,
+      issueDescription
+    };
   }
 
   function validate(d) {
-    if (!d.name) return "Please enter your name.";
-    if (!d.issue) return "Please describe the problem.";
+    if (!d.customerName) return "Please enter your name.";
+    if (!d.issueDescription) return "Please describe the problem.";
     return "";
   }
 
@@ -40,20 +57,22 @@
 
   function formatMessage(d, ticketId) {
     return (
-`Hi AlphaWave Solutions,
-Please can I get a quote?
+`Hello AlphaWave Solutions,
+
+I would like to request a quotation, please.
 
 Ticket ID: ${ticketId}
-Name: ${d.name}
-Phone: ${d.phone || "-"}
-Service: ${d.service}
-Device: ${d.device || "-"}
-Preferred contact: ${d.pref}
+Customer Name: ${d.customerName}
+Phone Number: ${d.phoneNumber || "-"}
+Service Requested: ${d.serviceRequested}
+Device Details: ${d.deviceDetails || "-"}
+Preferred Contact: ${d.preferredContact}
 
-Problem:
-${d.issue}
+Issue Description:
+${d.issueDescription}
 
-Thank you.`
+Kind regards,
+${d.customerName}`
     );
   }
 
@@ -63,15 +82,12 @@ Thank you.`
     localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
   }
 
-  function getApiUrl() {
-    return window.ALPHAWAVE && window.ALPHAWAVE.TICKETS_API_URL;
-  }
-
-  // Fire-and-forget remote save to avoid popup blockers.
-  // Uses keepalive so it still sends even if page navigates to Gmail.
+  // Fire-and-forget remote save (keeps user gesture intact + avoids popup blockers)
   function fireAndForgetRemote(record) {
-    const url = getApiUrl();
-    if (!url) return;
+    const apiBase = getApiBase();
+    if (!apiBase) return;
+
+    const url = `${apiBase}?action=create`;
 
     try {
       fetch(url, {
@@ -96,15 +112,17 @@ Thank you.`
 
   function createTicketNow(d) {
     const ticketId = makeTicketId();
+
+    // ✅ This matches your Apps Script mapping too (it supports id/name/phone/service/device/pref/issue/status)
     const record = {
       id: ticketId,
       createdAt: new Date().toISOString(),
-      name: d.name,
-      phone: d.phone,
-      service: d.service,
-      device: d.device,
-      pref: d.pref,
-      issue: d.issue,
+      name: d.customerName,
+      phone: d.phoneNumber,
+      service: d.serviceRequested,
+      device: d.deviceDetails,
+      pref: d.preferredContact,
+      issue: d.issueDescription,
       status: "Received"
     };
 
@@ -114,8 +132,14 @@ Thank you.`
     return { ticketId, record };
   }
 
-  // ✅ Save Quote (Local + Remote)
+  // ✅ Save Ticket (Local + Remote)
   $("btn_save")?.addEventListener("click", () => {
+    const apiBase = getApiBase();
+    if (!apiBase) {
+      setStatus("Configuration error: Missing API_BASE in assets/config.js.");
+      return;
+    }
+
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
@@ -124,8 +148,14 @@ Thank you.`
     setStatus(`Saved ✅ Ticket ID: ${ticketId}`, ticketId);
   });
 
-  // ✅ WhatsApp (open immediately to avoid blocker)
+  // ✅ WhatsApp (open immediately to avoid popup blocker)
   $("btn_whatsapp")?.addEventListener("click", () => {
+    const apiBase = getApiBase();
+    if (!apiBase) {
+      setStatus("Configuration error: Missing API_BASE in assets/config.js.");
+      return;
+    }
+
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
@@ -133,28 +163,32 @@ Thank you.`
     const { ticketId } = createTicketNow(d);
 
     const msg = formatMessage(d, ticketId);
-    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
-    // open immediately (user-gesture safe)
     window.open(waUrl, "_blank", "noopener");
-
-    setStatus(`Opened WhatsApp ✅ Ticket ID: ${ticketId}`, ticketId);
+    setStatus(`WhatsApp opened ✅ Ticket ID: ${ticketId}`, ticketId);
   });
 
-  // ✅ Email (Gmail compose, opens immediately)
+  // ✅ Email (Gmail compose in same tab)
   $("btn_email")?.addEventListener("click", () => {
+    const apiBase = getApiBase();
+    if (!apiBase) {
+      setStatus("Configuration error: Missing API_BASE in assets/config.js.");
+      return;
+    }
+
     const d = getData();
     const err = validate(d);
     if (err) { setStatus(err); return; }
 
     const { ticketId } = createTicketNow(d);
 
-    const subject = `Quote Request - ${d.service} (Ticket: ${ticketId})`;
+    const subject = `Quote Request – ${d.serviceRequested} (Ticket ID: ${ticketId})`;
     const body = formatMessage(d, ticketId);
 
     // Same-tab navigation avoids popup blockers
-    window.location.href = gmailComposeUrl(EMAIL_TO, subject, body);
+    window.location.href = gmailComposeUrl(SUPPORT_EMAIL, subject, body);
 
-    setStatus(`Email draft opened ✅ Ticket ID: ${ticketId} (tap Send in Gmail)`, ticketId);
+    setStatus(`Email draft opened ✅ Ticket ID: ${ticketId} (Tap “Send” in Gmail)`, ticketId);
   });
 })();
